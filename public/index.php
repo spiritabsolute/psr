@@ -23,7 +23,7 @@ $routes = $aura->getMap();
 $routes->get("home", "/", Action\Hello::class);
 $routes->get("about", "/about", Action\About::class);
 
-$routes->get("cabinet", "/cabinet", new Action\Cabinet($params["users"]));
+$routes->get("cabinet", "/cabinet", new Action\BasicAuthDecorator(new Action\Cabinet(), $params["users"]));
 
 $routes->get("blog", "/blog", Action\Blog\Index::class);
 $routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" => "\d+"]);

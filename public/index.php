@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
+use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
+use App\Http\Middleware\ProfilerMiddleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Action;
 
@@ -27,13 +28,14 @@ $routes->get("home", "/", Action\Hello::class);
 $routes->get("about", "/about", Action\About::class);
 
 $routes->get("cabinet", "/cabinet", function (ServerRequestInterface $request) use ($params) {
-	$profiler = new ProfilerMiddleware();
-	$auth = new BasicAuthMiddleware($params["users"]);
-	$cabinet = new Action\Cabinet();
-	return $profiler($request, function(ServerRequestInterface $request) use ($auth, $cabinet) {
-		return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
-			return $cabinet($request);
-		});
+	$pipeline = new Pipeline();
+
+	$pipeline->pipe(new ProfilerMiddleware());
+	$pipeline->pipe(new BasicAuthMiddleware($params["users"]));
+	$pipeline->pipe(new Action\Cabinet());
+	
+	return $pipeline($request, function () {
+		return new HtmlResponse("Undefined page", 404);
 	});
 });
 
@@ -60,7 +62,7 @@ try
 }
 catch (RequestNotMatchedException $exception)
 {
-	$response = new JsonResponse(["error" => "Undefined page"], 404);
+	$response = new HtmlResponse("Undefined page", 404);
 }
 
 ### Postprocessing

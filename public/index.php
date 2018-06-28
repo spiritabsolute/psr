@@ -11,13 +11,19 @@ use App\Http\Action;
 require __DIR__."/../vendor/autoload.php";
 
 ### Initialization
+$params = [
+	"users" => [
+		"admin" => "password"
+	]
+];
+
 $aura = new Aura\Router\RouterContainer();
 $routes = $aura->getMap();
 
 $routes->get("home", "/", Action\Hello::class);
 $routes->get("about", "/about", Action\About::class);
 
-$routes->get("cabinet", "/cabinet", Action\Cabinet::class);
+$routes->get("cabinet", "/cabinet", new Action\Cabinet($params["users"]));
 
 $routes->get("blog", "/blog", Action\Blog\Index::class);
 $routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" => "\d+"]);

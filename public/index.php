@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
@@ -19,19 +20,20 @@ $params = [
 	]
 ];
 
-$auth = new BasicAuthMiddleware($params["users"]);
-
 $aura = new Aura\Router\RouterContainer();
 $routes = $aura->getMap();
 
 $routes->get("home", "/", Action\Hello::class);
 $routes->get("about", "/about", Action\About::class);
 
-$routes->get("cabinet", "/cabinet", function (ServerRequestInterface $request) use ($auth) {
-
+$routes->get("cabinet", "/cabinet", function (ServerRequestInterface $request) use ($params) {
+	$profiler = new ProfilerMiddleware();
+	$auth = new BasicAuthMiddleware($params["users"]);
 	$cabinet = new Action\Cabinet();
-	return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
-		return $cabinet($request);
+	return $profiler($request, function(ServerRequestInterface $request) use ($auth, $cabinet) {
+		return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
+			return $cabinet($request);
+		});
 	});
 });
 

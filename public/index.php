@@ -3,9 +3,11 @@
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
+use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Action;
 
 require __DIR__."/../vendor/autoload.php";
@@ -17,13 +19,21 @@ $params = [
 	]
 ];
 
+$auth = new BasicAuthMiddleware($params["users"]);
+
 $aura = new Aura\Router\RouterContainer();
 $routes = $aura->getMap();
 
 $routes->get("home", "/", Action\Hello::class);
 $routes->get("about", "/about", Action\About::class);
 
-$routes->get("cabinet", "/cabinet", new Action\BasicAuthDecorator(new Action\Cabinet(), $params["users"]));
+$routes->get("cabinet", "/cabinet", function (ServerRequestInterface $request) use ($auth) {
+
+	$cabinet = new Action\Cabinet();
+	return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
+		return $cabinet($request);
+	});
+});
 
 $routes->get("blog", "/blog", Action\Blog\Index::class);
 $routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" => "\d+"]);

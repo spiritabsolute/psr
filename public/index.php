@@ -1,21 +1,23 @@
 <?php
 
+use App\Http\Action;
 use App\Http\Middleware\Credentials;
+use App\Http\Middleware\ErrorHandler;
 use App\Http\Middleware\PageNotFound;
+use App\Http\Middleware\Profiler;
+use App\Http\Middleware\BasicAuth;
 use Framework\Http\Application;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
-use App\Http\Middleware\Profiler;
-use App\Http\Middleware\BasicAuth;
-use App\Http\Action;
 
 require __DIR__."/../vendor/autoload.php";
 
 ### Initialization
 $params = [
+	"debug" => true,
 	"users" => [
 		"admin" => "password"
 	]
@@ -40,6 +42,7 @@ $router = new AuraRouterAdapter($aura);
 $resolver = new Resolver();
 $app = new Application($resolver, new PageNotFound());
 
+$app->pipe(new ErrorHandler($params["debug"]));
 $app->pipe(Credentials::class);
 $app->pipe(Profiler::class);
 

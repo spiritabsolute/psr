@@ -1,7 +1,7 @@
 <?php
-namespace Framework\Http;
+namespace Framework\Http\Pipeline;
 
-class ActionResolver
+class MiddlewareResolver
 {
 	public function resolve($handler): callable
 	{

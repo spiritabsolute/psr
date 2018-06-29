@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\PageNotFound;
 use Framework\Http\ActionResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
@@ -34,9 +35,7 @@ $routes->get("cabinet", "/cabinet", function (ServerRequestInterface $request) u
 	$pipeline->pipe(new BasicAuthMiddleware($params["users"]));
 	$pipeline->pipe(new Action\Cabinet());
 	
-	return $pipeline($request, function () {
-		return new HtmlResponse("Undefined page", 404);
-	});
+	return $pipeline($request, new PageNotFound());
 });
 
 $routes->get("blog", "/blog", Action\Blog\Index::class);
@@ -62,7 +61,8 @@ try
 }
 catch (RequestNotMatchedException $exception)
 {
-	$response = new HtmlResponse("Undefined page", 404);
+	$pageNotFound = new PageNotFound();
+	$response = $pageNotFound($request);
 }
 
 ### Postprocessing

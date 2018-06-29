@@ -7,9 +7,9 @@ use App\Http\Middleware\PageNotFound;
 use App\Http\Middleware\Profiler;
 use App\Http\Middleware\BasicAuth;
 use Framework\Http\Application;
+use Framework\Http\Middleware\Route;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
-use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
 
@@ -45,21 +45,10 @@ $app = new Application($resolver, new PageNotFound());
 $app->pipe(new ErrorHandler($params["debug"]));
 $app->pipe(Credentials::class);
 $app->pipe(Profiler::class);
+$app->pipe(new Route($router, $resolver));
 
 ### Runnig
 $request = ServerRequestFactory::fromGlobals();
-
-try
-{
-	$result = $router->match($request);
-	foreach ($result->getAttributes() as $attribute => $value)
-	{
-		$request = $request->withAttribute($attribute, $value);
-	}
-	$app->pipe($result->getHandler());
-}
-catch (RequestNotMatchedException $exception) {}
-
 $response = $app->run($request);
 
 ### Postprocessing

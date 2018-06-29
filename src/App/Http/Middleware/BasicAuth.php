@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\EmptyResponse;
 
-class BasicAuthMiddleware
+class BasicAuth
 {
 	public const ATTRIBUTE = "username";
 

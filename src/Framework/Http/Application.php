@@ -1,7 +1,7 @@
 <?php
 namespace Framework\Http;
 
-use Framework\Http\Pipeline\MiddlewareResolver;
+use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Pipeline\Pipeline;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -10,7 +10,7 @@ class Application extends Pipeline
 	private $resolver;
 	private $default;
 
-	public function __construct(MiddlewareResolver $resolver, callable $default)
+	public function __construct(Resolver $resolver, callable $default)
 	{
 		parent::__construct();
 		$this->resolver = $resolver;

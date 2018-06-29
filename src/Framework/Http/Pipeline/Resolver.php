@@ -3,7 +3,7 @@ namespace Framework\Http\Pipeline;
 
 use Psr\Http\Message\ServerRequestInterface;
 
-class MiddlewareResolver
+class Resolver
 {
 	public function resolve($handler): callable
 	{

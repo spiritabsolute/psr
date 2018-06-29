@@ -7,6 +7,7 @@ use App\Http\Middleware\PageNotFound;
 use App\Http\Middleware\Profiler;
 use App\Http\Middleware\BasicAuth;
 use Framework\Http\Application;
+use Framework\Http\Middleware\Dispatch;
 use Framework\Http\Middleware\Route;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
@@ -45,7 +46,8 @@ $app = new Application($resolver, new PageNotFound());
 $app->pipe(new ErrorHandler($params["debug"]));
 $app->pipe(Credentials::class);
 $app->pipe(Profiler::class);
-$app->pipe(new Route($router, $resolver));
+$app->pipe(new Route($router));
+$app->pipe(new Dispatch($resolver));
 
 ### Runnig
 $request = ServerRequestFactory::fromGlobals();

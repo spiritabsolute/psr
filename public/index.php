@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Middleware\PageNotFound;
+use Framework\Http\Application;
 use Framework\Http\Pipeline\MiddlewareResolver;
-use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\ServerRequestFactory;
@@ -37,8 +37,8 @@ $routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" =
 $router = new AuraRouterAdapter($aura);
 
 $resolver = new MiddlewareResolver();
-$pipeline = new Pipeline();
-$pipeline->pipe($resolver->resolve(ProfilerMiddleware::class));
+$app = new Application($resolver, new PageNotFound());
+$app->pipe(ProfilerMiddleware::class);
 
 ### Runnig
 $request = ServerRequestFactory::fromGlobals();
@@ -50,18 +50,14 @@ try
 	{
 		$request = $request->withAttribute($attribute, $value);
 	}
-	$handlers = $result->getHandler();
-	foreach (is_array($handlers) ? $handlers : [$handlers] as $handler)
-	{
-		$pipeline->pipe($resolver->resolve($handler));
-	}
+	$app->pipe($result->getHandler());
 }
 catch (RequestNotMatchedException $exception) {}
 
-$response = $pipeline($request, new PageNotFound());
+$response = $app->run($request);
 
 ### Postprocessing
-$response = $response->withHeader("X-Developer", ["Spirit"]);
+$response = $response->withHeader("X-Developer", ["SpiritAbsolute"]);
 
 ### Sending
 $emitter = new SapiEmitter();

@@ -18,12 +18,12 @@ class Pipeline
 		$this->queue->enqueue($middleware);
 	}
 
-	public function __invoke(ServerRequestInterface $request, callable $default): ResponseInterface
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $default): ResponseInterface
 	{
-		return $this->next($request, $default);
+		return $this->next($request, $response, $default);
 	}
 
-	private function next(ServerRequestInterface $request, callable $default): ResponseInterface
+	private function next(ServerRequestInterface $request, ResponseInterface $response, callable $default): ResponseInterface
 	{
 		if ($this->queue->isEmpty())
 		{
@@ -32,8 +32,8 @@ class Pipeline
 
 		$current = $this->queue->dequeue();
 
-		return $current($request, function (ServerRequestInterface $request) use ($default) {
-			return $this->next($request, $default);
+		return $current($request, $response, function (ServerRequestInterface $request) use ($response, $default) {
+			return $this->next($request, $response, $default);
 		});
 	}
 }

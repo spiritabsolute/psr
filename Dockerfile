@@ -1,6 +1,7 @@
 FROM composer AS composer
 
-COPY . /app
+COPY ./composer.json /app
+COPY ./composer.lock /app
 
 RUN composer install \
 	--no-interaction \
@@ -10,16 +11,15 @@ RUN composer install \
 
 FROM php:alpine
 
-COPY --from=composer /app /app
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
+COPY . /app
 COPY .docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer /app/vendor /app/vendor
 
 RUN apk add --no-cache $PHPIZE_DEPS \
 	&& pecl install xdebug \
 	&& docker-php-ext-enable xdebug
 
 WORKDIR /app
-
-CMD ["php"]

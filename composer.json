@@ -1,6 +1,7 @@
 {
 	"config": {
-		"sort-packages": true
+		"sort-packages": true,
+		"process-timeout": 0
 	},
 	"require": {
 		"php": ">=7.1.0",
@@ -20,7 +21,7 @@
 		"phpunit/phpunit": "^6.5"
 	},
 	"scripts": {
-		"serve": "php -S 0.0.0.0:8080 -t public index.php",
+		"serve": "php -S 0.0.0.0:8000 -t public -f index.php",
 		"test": "phpunit --colors=always"
 	}
 }

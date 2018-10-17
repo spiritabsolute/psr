@@ -6,6 +6,7 @@ use App\Http\Middleware\ErrorHandler;
 use App\Http\Middleware\PageNotFound;
 use App\Http\Middleware\Profiler;
 use App\Http\Middleware\BasicAuth;
+use Framework\Container\Container;
 use Framework\Http\Application;
 use Framework\Http\Middleware\Dispatch;
 use Framework\Http\Middleware\Route;
@@ -17,14 +18,12 @@ use Zend\Diactoros\Response\SapiEmitter;
 
 require __DIR__."/../vendor/autoload.php";
 
-### Initialization
-$params = [
-	"debug" => true,
-	"users" => [
-		"admin" => "password"
-	]
-];
+### Configuration
+$container = new Container();
+$container->set("debug", true);
+$container->set("users", ["admin" => "password"]);
 
+### Initialization
 $aura = new Aura\Router\RouterContainer();
 $routes = $aura->getMap();
 
@@ -32,7 +31,7 @@ $routes->get("home", "/", Action\Hello::class);
 $routes->get("about", "/about", Action\About::class);
 
 $routes->get("cabinet", "/cabinet", [
-	new BasicAuth($params["users"]),
+	new BasicAuth($container->get("users")),
 	Action\Cabinet::class
 ]);
 
@@ -44,7 +43,7 @@ $router = new AuraRouterAdapter($aura);
 $resolver = new Resolver();
 $app = new Application($resolver, new PageNotFound());
 
-$app->pipe(new ErrorHandler($params["debug"]));
+$app->pipe(new ErrorHandler($container->get("debug")));
 $app->pipe(Credentials::class);
 $app->pipe(Profiler::class);
 $app->pipe(new Route($router));

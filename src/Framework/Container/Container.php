@@ -4,14 +4,25 @@ namespace Framework\Container;
 class Container
 {
 	private $defintions = [];
+	private $results = [];
 
 	public function set($id, $value): void
 	{
+		if (array_key_exists($id, $this->results))
+		{
+			unset($this->results[$id]);
+		}
+
 		$this->defintions[$id] = $value;
 	}
 
 	public function get($id)
 	{
+		if (array_key_exists($id, $this->results))
+		{
+			return $this->results[$id];
+		}
+
 		if (!array_key_exists($id, $this->defintions))
 		{
 			throw new ServiceNotFoundException("Undefined parameter ".$id);
@@ -21,13 +32,13 @@ class Container
 
 		if ($defintions instanceof \Closure)
 		{
-			$result = $defintions();
+			$this->results[$id] = $defintions();
 		}
 		else
 		{
-			$result = $defintions;
+			$this->results[$id] = $defintions;
 		}
 
-		return $result;
+		return $this->results[$id];
 	}
 }

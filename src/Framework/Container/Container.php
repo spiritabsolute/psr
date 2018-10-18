@@ -17,6 +17,17 @@ class Container
 			throw new ServiceNotFoundException("Undefined parameter ".$id);
 		}
 
-		return $this->defintions[$id];
+		$defintions = $this->defintions[$id];
+
+		if ($defintions instanceof \Closure)
+		{
+			$result = $defintions();
+		}
+		else
+		{
+			$result = $defintions;
+		}
+
+		return $result;
 	}
 }

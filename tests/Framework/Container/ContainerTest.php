@@ -24,6 +24,18 @@ class ContainerTest extends TestCase
 		self::assertEquals($value, $container->get($id));
 	}
 
+	public function testCallback()
+	{
+		$container = new Container();
+
+		$container->set($id = "name", function () {
+			return new \stdClass();
+		});
+
+		self::assertNotNull($value = $container->get($id));
+		self::assertInstanceOf(\stdClass::class, $value);
+	}
+
 	public function testNotFound()
 	{
 		$container = new Container();

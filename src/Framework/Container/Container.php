@@ -32,7 +32,7 @@ class Container
 
 		if ($defintions instanceof \Closure)
 		{
-			$this->results[$id] = $defintions();
+			$this->results[$id] = $defintions($this);
 		}
 		else
 		{

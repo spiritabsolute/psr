@@ -1,16 +1,13 @@
-version: "3"
+version: "3.4"
 services:
   app:
     labels:
       app.description: "Psr framework"
       app.maintainer: "spiritabsolute@yandex.ru"
-    build: .
-    container_name: psr-framework
+    build:
+      context: .
+      target: prod
+    container_name: psr-framework-prod
     command: composer serve
     ports:
       - 8000:8000
-    volumes:
-      - ./public:/app/public
-      - ./src:/app/src
-      - ./tests:/app/tests
-      - ./phpunit.xml.dist:/app/phpunit.xml.dist

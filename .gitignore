@@ -2,3 +2,4 @@
 /log
 /vendor
 /phpunit.xml
+docker-compose.override.yml

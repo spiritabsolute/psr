@@ -9,6 +9,13 @@ If you are using docker, run the command:
 ```
 docker-compose -p psr-framework up --build
 ```
-To use xdebug, set the settings in the file: .docker/php/conf.d/xdebug.ini
 
 The application will be available at http://127.0.0.1:8000
+
+
+For **development mode** before build image you need add docker-compose.override.yml file.\
+Just copy the file docker-compose.override.yml.dist:
+```
+docker-compose.override.yml.dist -> docker-compose.override.yml
+```
+To use **xdebug**, set the settings in the file: .docker/php/conf.d/xdebug.ini

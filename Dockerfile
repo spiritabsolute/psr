@@ -9,7 +9,18 @@ RUN composer install \
 	--no-scripts \
 	--prefer-dist
 
-FROM php:alpine
+FROM php:alpine as prod
+
+COPY . /app
+COPY .docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer /app/vendor /app/vendor
+
+WORKDIR /app
+
+FROM php:alpine as dev
 
 COPY . /app
 COPY .docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/

@@ -12,6 +12,7 @@ use Framework\Http\Middleware\Dispatch;
 use Framework\Http\Middleware\Route;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
+use Framework\Http\Router\Router;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -20,34 +21,55 @@ require __DIR__."/../vendor/autoload.php";
 
 ### Configuration
 $container = new Container();
-$container->set("debug", true);
-$container->set("users", ["admin" => "password"]);
 
-### Initialization
-$aura = new Aura\Router\RouterContainer();
-$routes = $aura->getMap();
-
-$routes->get("home", "/", Action\Hello::class);
-$routes->get("about", "/about", Action\About::class);
-
-$routes->get("cabinet", "/cabinet", [
-	new BasicAuth($container->get("users")),
-	Action\Cabinet::class
+$container->set("config", [
+	"debug" => true,
+	"users" => ["admin" => "password"]
 ]);
 
-$routes->get("blog", "/blog", Action\Blog\Index::class);
-$routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" => "\d+"]);
+$container->set(Application::class, function (Container $container) {
+	return new Application($container->get(Resolver::class), new PageNotFound());
+});
+$container->set(Resolver::class, function () {
+	return new Resolver();
+});
+$container->set(BasicAuth::class, function (Container $container) {
+	return new BasicAuth($container->get("config")["users"]);
+});
+$container->set(ErrorHandler::class, function (Container $container) {
+	return new ErrorHandler($container->get("config")["debug"]);
+});
+$container->set(Route::class, function (Container $container) {
+	return new Route($container->get(Router::class));
+});
+$container->set(Dispatch::class, function (Container $container) {
+	return new Dispatch($container->get(Resolver::class));
+});
+$container->set(Router::class, function (Container $container) {
+	$aura = new Aura\Router\RouterContainer();
+	$routes = $aura->getMap();
 
-$router = new AuraRouterAdapter($aura);
+	$routes->get("home", "/", Action\Hello::class);
+	$routes->get("about", "/about", Action\About::class);
+	$routes->get("cabinet", "/cabinet", [
+		$container->get(BasicAuth::class),
+		Action\Cabinet::class
+	]);
+	$routes->get("blog", "/blog", Action\Blog\Index::class);
+	$routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" => "\d+"]);
 
-$resolver = new Resolver();
-$app = new Application($resolver, new PageNotFound());
+	return new AuraRouterAdapter($aura);
+});
 
-$app->pipe(new ErrorHandler($container->get("debug")));
+### Initialization
+/** @var Application $app */
+$app = $container->get(Application::class);
+
+$app->pipe($container->get(ErrorHandler::class));
 $app->pipe(Credentials::class);
 $app->pipe(Profiler::class);
-$app->pipe(new Route($router));
-$app->pipe(new Dispatch($resolver));
+$app->pipe($container->get(Route::class));
+$app->pipe($container->get(Dispatch::class));
 
 ### Runnig
 $request = ServerRequestFactory::fromGlobals();

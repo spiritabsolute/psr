@@ -28,7 +28,11 @@ $container->set("config", [
 ]);
 
 $container->set(Application::class, function (Container $container) {
-	return new Application($container->get(Resolver::class), new PageNotFound());
+	return new Application(
+		$container->get(Resolver::class),
+		$container->get(Router::class),
+		new PageNotFound()
+	);
 });
 $container->set(Resolver::class, function () {
 	return new Resolver();
@@ -45,25 +49,22 @@ $container->set(Route::class, function (Container $container) {
 $container->set(Dispatch::class, function (Container $container) {
 	return new Dispatch($container->get(Resolver::class));
 });
-$container->set(Router::class, function (Container $container) {
-	$aura = new Aura\Router\RouterContainer();
-	$routes = $aura->getMap();
-
-	$routes->get("home", "/", Action\Hello::class);
-	$routes->get("about", "/about", Action\About::class);
-	$routes->get("cabinet", "/cabinet", [
-		$container->get(BasicAuth::class),
-		Action\Cabinet::class
-	]);
-	$routes->get("blog", "/blog", Action\Blog\Index::class);
-	$routes->get("blog_show", "/blog/{id}", Action\Blog\Show::class)->tokens(["id" => "\d+"]);
-
-	return new AuraRouterAdapter($aura);
+$container->set(Router::class, function () {
+	return new AuraRouterAdapter(new Aura\Router\RouterContainer());
 });
 
 ### Initialization
 /** @var Application $app */
 $app = $container->get(Application::class);
+
+$app->addGetRoute("home", "/", Action\Hello::class);
+$app->addGetRoute("about", "/about", Action\About::class);
+$app->addGetRoute("cabinet", "/cabinet", [
+	$container->get(BasicAuth::class),
+	Action\Cabinet::class
+]);
+$app->addGetRoute("blog", "/blog", Action\Blog\Index::class);
+$app->addGetRoute("blog_show", "/blog/{id}", Action\Blog\Show::class, ["tokens" => ["id" => "\d+"]]);
 
 $app->pipe($container->get(ErrorHandler::class));
 $app->pipe(Credentials::class);

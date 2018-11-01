@@ -15,8 +15,8 @@ $container->set(Application::class, function (Container $container) {
 		new Middleware\PageNotFound()
 	);
 });
-$container->set(Resolver::class, function () {
-	return new Resolver();
+$container->set(Resolver::class, function (Container $container) {
+	return new Resolver($container);
 });
 $container->set(Middleware\BasicAuth::class, function (Container $container) {
 	return new Middleware\BasicAuth($container->get("config")["users"]);

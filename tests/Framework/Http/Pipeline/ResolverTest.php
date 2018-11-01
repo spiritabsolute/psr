@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Tests\Framework\Http\DummyContainer;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\HtmlResponse;
@@ -20,7 +21,7 @@ class ResolverTest extends TestCase
 	 */
 	public function testDirect($handler)
 	{
-		$resolver = new Resolver();
+		$resolver = new Resolver(new DummyContainer());
 		$middleware = $resolver->resolve($handler);
 
 		/**
@@ -41,7 +42,7 @@ class ResolverTest extends TestCase
 	 */
 	public function testNext($handler)
 	{
-		$resolver = new Resolver();
+		$resolver = new Resolver(new DummyContainer());
 		$middleware = $resolver->resolve($handler);
 
 		/**
@@ -58,7 +59,7 @@ class ResolverTest extends TestCase
 
 	public function testArray()
 	{
-		$resolver = new Resolver();
+		$resolver = new Resolver(new DummyContainer());
 		$middleware = $resolver->resolve([
 			new DummyMiddleware(),
 			new CallableMiddleware()

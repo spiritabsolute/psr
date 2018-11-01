@@ -1,6 +1,7 @@
 <?php
 namespace Framework\Http\Pipeline;
 
+use Framework\Container\Container;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -11,6 +12,17 @@ use Psr\Http\Server\MiddlewareInterface;
  */
 class Resolver
 {
+	/**
+	 * @var Container
+	 */
+	private $container;
+
+	public function __construct(Container $container)
+	{
+
+		$this->container = $container;
+	}
+
 	public function resolve($handler): callable
 	{
 		if (is_array($handler))
@@ -18,11 +30,11 @@ class Resolver
 			return $this->createPipe($handler);
 		}
 
-		if (is_string($handler))
+		if (is_string($handler) && $this->container->has($handler))
 		{
 			return function(ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler)
 			{
-				$middleware = $this->resolve(new $handler());
+				$middleware = $this->resolve($this->container->get($handler));
 				return $middleware($request, $response, $next);
 			};
 		}

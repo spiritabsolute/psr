@@ -25,6 +25,11 @@ class Container
 
 		if (!array_key_exists($id, $this->defintions))
 		{
+			if (class_exists($id))
+			{
+				return $this->results[$id] = new $id();
+			}
+
 			throw new ServiceNotFoundException("Undefined parameter ".$id);
 		}
 
@@ -40,5 +45,10 @@ class Container
 		}
 
 		return $this->results[$id];
+	}
+
+	public function has($id): bool
+	{
+		return array_key_exists($id, $this->defintions) || class_exists($id);
 	}
 }

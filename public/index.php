@@ -5,7 +5,7 @@ use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
 
 /**
- * @var \Framework\Container\Container $container
+ * @var \Psr\Container\ContainerInterface $container
  * @var \Framework\Http\Application $app
  */
 

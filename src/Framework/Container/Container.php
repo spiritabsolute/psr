@@ -27,7 +27,33 @@ class Container
 		{
 			if (class_exists($id))
 			{
-				return $this->results[$id] = new $id();
+				$reflection = new \ReflectionClass($id);
+				$arguments = [];
+				if (($constructor = $reflection->getConstructor()) !== null)
+				{
+					foreach ($constructor->getParameters() as $parameter)
+					{
+						if ($paramClass = $parameter->getClass())
+						{
+							$arguments[] = $this->get($paramClass->getName());
+						}
+						elseif ($parameter->isArray())
+						{
+							$arguments[] = [];
+						}
+						else
+						{
+							if (!$parameter->isDefaultValueAvailable())
+							{
+								throw new ServiceNotFoundException(
+									"Unable to resolve ".$parameter->getName()." in service ".$id);
+							}
+							$arguments[] = $parameter->getDefaultValue();
+						}
+					}
+				}
+				$result = $reflection->newInstanceArgs($arguments);
+				return $this->results[$id] = $result;
 			}
 
 			throw new ServiceNotFoundException("Undefined parameter ".$id);

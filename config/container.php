@@ -1,10 +1,8 @@
 <?php
 use Framework\Container\Container;
 
-$container = new Container();
+$container = new Container(require "dependencies.php");
 
 $container->set("config", require "parameters.php");
-
-require "dependencies.php";
 
 return $container;

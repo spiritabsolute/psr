@@ -1,7 +1,9 @@
 <?php
 namespace Framework\Container;
 
-class Container
+use Psr\Container\ContainerInterface;
+
+class Container implements ContainerInterface
 {
 	private $defintions = [];
 	private $results = [];

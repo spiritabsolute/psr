@@ -1,7 +1,7 @@
 <?php
 namespace Framework\Http\Pipeline;
 
-use Framework\Container\Container;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -13,11 +13,11 @@ use Psr\Http\Server\MiddlewareInterface;
 class Resolver
 {
 	/**
-	 * @var Container
+	 * @var ContainerInterface
 	 */
 	private $container;
 
-	public function __construct(Container $container)
+	public function __construct(ContainerInterface $container)
 	{
 
 		$this->container = $container;

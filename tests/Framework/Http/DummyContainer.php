@@ -1,10 +1,10 @@
 <?php
 namespace Tests\Framework\Http;
 
-use Framework\Container\Container;
-use Framework\Container\ServiceNotFoundException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\ServiceManager;
 
-class DummyContainer extends Container
+class DummyContainer extends ServiceManager
 {
 	public function get($id)
 	{

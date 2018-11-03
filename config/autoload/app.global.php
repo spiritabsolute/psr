@@ -1,11 +1,9 @@
 <?php
 use App\Http\Middleware;
-
 use Framework\Http\Application;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
-
 use Psr\Container\ContainerInterface;
 use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
@@ -28,12 +26,10 @@ return [
 			Resolver::class => function (ContainerInterface $container) {
 				return new Resolver($container);
 			},
-			Middleware\BasicAuth::class => function (ContainerInterface $container) {
-				return new Middleware\BasicAuth($container->get("config")["users"]);
-			},
 			Middleware\ErrorHandler::class => function (ContainerInterface $container) {
 				return new Middleware\ErrorHandler($container->get("config")["debug"]);
 			},
 		]
 	],
+	"debug" => false
 ];

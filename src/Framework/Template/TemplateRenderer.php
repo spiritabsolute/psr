@@ -3,9 +3,16 @@ namespace Framework\Template;
 
 class TemplateRenderer
 {
+	private $path;
+
+	public function __construct($path)
+	{
+		$this->path = $path;
+	}
+
 	public function render($view, $params = []): string
 	{
-		$templateFile = "../templates/".$view.".php";
+		$templateFile = $this->path ."/".$view.".php";
 
 		extract($params, EXTR_OVERWRITE);
 

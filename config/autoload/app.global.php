@@ -4,6 +4,7 @@ use Framework\Http\Application;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
+use Framework\Template\TemplateRenderer;
 use Psr\Container\ContainerInterface;
 use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
@@ -28,6 +29,9 @@ return [
 			},
 			Middleware\ErrorHandler::class => function (ContainerInterface $container) {
 				return new Middleware\ErrorHandler($container->get("config")["debug"]);
+			},
+			TemplateRenderer::class => function () {
+				return new TemplateRenderer("../templates");
 			},
 		]
 	],

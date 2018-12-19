@@ -15,5 +15,6 @@ services:
       - ./config:/app/config
       - ./public:/app/public
       - ./src:/app/src
+      - ./templates:/app/templates
       - ./tests:/app/tests
       - ./phpunit.xml.dist:/app/phpunit.xml.dist

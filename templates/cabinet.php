@@ -1,3 +1,6 @@
+<?php
+/** @var string $username */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="Development of the psr framework for educational purposes">
 	<meta name="author" content="spiritabsolute">
-	<title>Psr framework</title>
+	<title>Psr framework - cabinet</title>
 	<!-- Bootstrap core CSS -->
 	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<!-- Custom styles for this template -->
@@ -19,14 +22,14 @@
 				<div class="inner">
 					<h3 class="masthead-brand">Psr framework</h3>
 					<nav class="nav nav-masthead">
-						<a class="nav-link active" href="/">Home</a>
+						<a class="nav-link" href="/">Home</a>
 						<a class="nav-link" href="/about">About</a>
-						<a class="nav-link" href="/cabinet">Cabinet</a>
+						<a class="nav-link active" href="/cabinet">Cabinet</a>
 					</nav>
 				</div>
 			</div>
 			<div class="inner cover">
-				<h1 class="cover-heading">Hello, Guest!</h1>
+				<h1 class="cover-heading">Cabinet of <?=htmlspecialchars($username)?></h1>
 			</div>
 			<div class="mastfoot">
 				<div class="inner">

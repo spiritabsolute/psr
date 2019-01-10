@@ -9,7 +9,7 @@ RUN composer install \
 	--no-scripts \
 	--prefer-dist
 
-FROM php:alpine as prod
+FROM php:7.2-alpine as prod
 
 COPY . /app
 COPY .docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/
@@ -20,7 +20,7 @@ COPY --from=composer /app/vendor /app/vendor
 
 WORKDIR /app
 
-FROM php:alpine as dev
+FROM php:7.2-alpine as dev
 
 COPY . /app
 COPY .docker/php/conf.d/*.ini /usr/local/etc/php/conf.d/

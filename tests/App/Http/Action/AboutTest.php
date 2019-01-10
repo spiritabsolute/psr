@@ -1,11 +1,11 @@
 <?php
 namespace Tests\App\Http\Action;
 
-use App\Http\Action\Hello;
+use App\Http\Action\About;
 use Framework\Template\TemplateRenderer;
 use PHPUnit\Framework\TestCase;
 
-class HelloTest extends TestCase
+class AboutTest extends TestCase
 {
 	private $renderer;
 
@@ -16,12 +16,12 @@ class HelloTest extends TestCase
 		$this->renderer = new TemplateRenderer("templates");
 	}
 
-	public function testGuest()
+	public function testContent()
 	{
-		$action = new Hello($this->renderer);
+		$action = new About($this->renderer);
 		$response = $action();
 
 		self::assertEquals(200, $response->getStatusCode());
-		self::assertContains("Hello, Guest!", $response->getBody()->getContents());
+		self::assertContains("I am a simple site", $response->getBody()->getContents());
 	}
 }

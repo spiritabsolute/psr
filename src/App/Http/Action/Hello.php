@@ -2,7 +2,6 @@
 namespace App\Http\Action;
 
 use Framework\Template\TemplateRenderer;
-use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
 class Hello

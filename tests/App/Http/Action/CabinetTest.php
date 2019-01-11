@@ -3,7 +3,7 @@ namespace Tests\App\Http\Action;
 
 use App\Http\Action\Cabinet;
 use App\Http\Middleware\BasicAuth;
-use Framework\Template\TemplateRenderer;
+use Framework\Template\PhpRenderer;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
@@ -15,7 +15,7 @@ class CabinetTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->renderer = new TemplateRenderer("templates");
+		$this->renderer = new PhpRenderer("templates");
 	}
 
 	public function testContent()

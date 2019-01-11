@@ -2,7 +2,7 @@
 namespace Tests\App\Http\Action;
 
 use App\Http\Action\About;
-use Framework\Template\TemplateRenderer;
+use Framework\Template\PhpRenderer;
 use PHPUnit\Framework\TestCase;
 
 class AboutTest extends TestCase
@@ -13,7 +13,7 @@ class AboutTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->renderer = new TemplateRenderer("templates");
+		$this->renderer = new PhpRenderer("templates");
 	}
 
 	public function testContent()

@@ -5,7 +5,7 @@ use App\Http\Action;
  * @var \Framework\Http\Application $app
  */
 
-$app->addGetRoute("home", "/", Action\Hello::class);
+$app->addGetRoute("home", "/", Action\Home::class);
 $app->addGetRoute("about", "/about", Action\About::class);
 $app->addGetRoute("cabinet", "/cabinet", [
 	$container->get(App\Http\Middleware\BasicAuth::class),

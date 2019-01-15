@@ -1,11 +1,11 @@
 <?php
 namespace Tests\App\Http\Action;
 
-use App\Http\Action\Hello;
+use App\Http\Action\Home;
 use Framework\Template\PhpRenderer;
 use PHPUnit\Framework\TestCase;
 
-class HelloTest extends TestCase
+class HomeTest extends TestCase
 {
 	private $renderer;
 
@@ -18,7 +18,7 @@ class HelloTest extends TestCase
 
 	public function testGuest()
 	{
-		$action = new Hello($this->renderer);
+		$action = new Home($this->renderer);
 		$response = $action();
 
 		self::assertEquals(200, $response->getStatusCode());

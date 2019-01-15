@@ -4,7 +4,7 @@ namespace App\Http\Action;
 use Framework\Template\TemplateRenderer;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class Hello
+class Home
 {
 	private $templateRenderer;
 
@@ -15,6 +15,6 @@ class Hello
 
 	public function __invoke()
 	{
-		return new HtmlResponse($this->templateRenderer->render("hello"));
+		return new HtmlResponse($this->templateRenderer->render("app/home"));
 	}
 }

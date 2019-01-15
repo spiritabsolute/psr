@@ -18,6 +18,8 @@ class Cabinet
 	public function __invoke(ServerRequestInterface $request)
 	{
 		$username = $request->getAttribute(BasicAuth::ATTRIBUTE);
-		return new HtmlResponse($this->templateRenderer->render("cabinet", ["username" => $username]));
+		return new HtmlResponse($this->templateRenderer->render("app/cabinet", [
+			"username" => $username
+		]));
 	}
 }

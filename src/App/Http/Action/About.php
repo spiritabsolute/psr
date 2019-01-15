@@ -15,6 +15,6 @@ class About
 
 	public function __invoke()
 	{
-		return new HtmlResponse($this->templateRenderer->render("about"));
+		return new HtmlResponse($this->templateRenderer->render("app/about"));
 	}
 }

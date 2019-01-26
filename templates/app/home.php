@@ -7,7 +7,7 @@ $this->params["title"] = "Psr framework - home";
 $this->extend("layout/default");
 ?>
 
-<?php $this->beginBlock(); ?>
+<?php $this->beginBlock("navbar"); ?>
 <div class="inner">
 	<h3 class="masthead-brand">Psr framework</h3>
 	<nav class="nav nav-masthead">
@@ -16,7 +16,7 @@ $this->extend("layout/default");
 		<a class="nav-link" href="/cabinet">Cabinet</a>
 	</nav>
 </div>
-<?php $this->endBlock("navbar"); ?>
+<?php $this->endBlock(); ?>
 
 
 <div class="inner cover">

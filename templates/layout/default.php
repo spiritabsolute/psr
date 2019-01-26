@@ -10,9 +10,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="Development of the psr framework for educational purposes">
-	<meta name="author" content="spiritabsolute">
-	<title><?= $this->getParam("title"); ?></title>
+	<?= $this->renderBlock("meta"); ?>
+	<title><?= $this->renderBlock("title"); ?></title>
 	<!-- Bootstrap core CSS -->
 	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<!-- Custom styles for this template -->
@@ -23,10 +22,10 @@
 	<div class="site-wrapper-inner">
 		<div class="cover-container">
 			<div class="masthead clearfix">
-				<?= $this->renderBlock("navbar") ?>
+				<?= $this->renderBlock("navbar"); ?>
 			</div>
 			<div class="inner cover">
-				<?= $content ?>
+				<?= $this->renderBlock("content"); ?>
 			</div>
 			<div class="mastfoot">
 				<div class="inner">

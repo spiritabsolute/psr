@@ -5,7 +5,6 @@ class PhpRenderer implements TemplateRenderer
 {
 	private $path;
 	private $extend;
-	private $params = [];
 	private $blocks = [];
 	/**
 	 * @var \SplStack
@@ -32,9 +31,7 @@ class PhpRenderer implements TemplateRenderer
 			return $content;
 		}
 
-		return $this->render($this->extend, [
-			"content" => $content
-		]);
+		return $this->render($this->extend);
 	}
 
 	public function renderBlock($name): string
@@ -45,16 +42,6 @@ class PhpRenderer implements TemplateRenderer
 	public function extend($view): void
 	{
 		$this->extend = $view;
-	}
-
-	public function setParam($name, $value): void
-	{
-		$this->params[$name] = $value;
-	}
-
-	public function getParam($name)
-	{
-		return $this->params[$name];
 	}
 
 	public function beginBlock($name): void

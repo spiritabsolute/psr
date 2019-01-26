@@ -4,9 +4,12 @@
  * @var string $username
  */
 
-$this->setParam("title", "Psr framework - cabinet");
 $this->extend("layout/columns");
 ?>
+
+<?php $this->beginBlock("title"); ?>
+Psr framework - cabinet
+<?php $this->endBlock(); ?>
 
 <?php $this->beginBlock("navbar"); ?>
 <div class="inner">
@@ -19,13 +22,14 @@ $this->extend("layout/columns");
 </div>
 <?php $this->endBlock(); ?>
 
-<?php $this->beginBlock("sidebar"); ?>
-	<div class="panel panel-default">
-		<div class="panel-heading">Links</div>
-		<div class="panel-body">Cabinet navigation</div>
-	</div>
+<?php $this->beginBlock("main"); ?>
+<h3 class="cover-heading">Cabinet of <?=htmlspecialchars($username)?></h3>
 <?php $this->endBlock(); ?>
 
-<div class="inner cover">
-	<h1 class="cover-heading">Cabinet of <?=htmlspecialchars($username)?></h1>
+<?php $this->beginBlock("sidebar"); ?>
+<div class="panel panel-default">
+	<div class="panel-heading">Links</div>
+	<div class="panel-body">Cabinet</div>
+	<div class="panel-body">Settings</div>
 </div>
+<?php $this->endBlock(); ?>

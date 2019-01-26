@@ -37,7 +37,7 @@ class PhpRenderer implements TemplateRenderer
 		]);
 	}
 
-	public function renderBlock($name)
+	public function renderBlock($name): string
 	{
 		return $this->blocks[$name] ?? "";
 	}
@@ -47,13 +47,23 @@ class PhpRenderer implements TemplateRenderer
 		$this->extend = $view;
 	}
 
-	public function beginBlock($name)
+	public function setParam($name, $value): void
+	{
+		$this->params[$name] = $value;
+	}
+
+	public function getParam($name)
+	{
+		return $this->params[$name];
+	}
+
+	public function beginBlock($name): void
 	{
 		$this->blockNames->push($name);
 		ob_start();
 	}
 
-	public function endBlock()
+	public function endBlock(): void
 	{
 		$name = $this->blockNames->pop();
 		$this->blocks[$name] = ob_get_clean();

@@ -3,7 +3,7 @@
  * @var \Framework\Template\PhpRenderer $this
  */
 
-$this->params["title"] = "Psr framework - about";
+$this->setParam("title", "Psr framework - about");
 $this->extend("layout/columns");
 ?>
 

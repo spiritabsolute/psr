@@ -3,7 +3,7 @@
  * @var \Framework\Template\PhpRenderer $this
  */
 
-$this->params["title"] = "Psr framework - home";
+$this->setParam("title", "Psr framework - home");
 $this->extend("layout/default");
 ?>
 

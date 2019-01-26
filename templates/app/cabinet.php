@@ -4,7 +4,7 @@
  * @var string $username
  */
 
-$this->params["title"] = "Psr framework - cabinet";
+$this->setParam("title", "Psr framework - cabinet");
 $this->extend("layout/columns");
 ?>
 

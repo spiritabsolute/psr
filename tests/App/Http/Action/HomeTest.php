@@ -22,6 +22,6 @@ class HomeTest extends TestCase
 		$response = $action();
 
 		self::assertEquals(200, $response->getStatusCode());
-		self::assertContains("Hello, Guest!", $response->getBody()->getContents());
+		self::assertContains("What is Lorem Ipsum?", $response->getBody()->getContents());
 	}
 }

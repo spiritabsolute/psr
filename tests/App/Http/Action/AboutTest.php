@@ -22,6 +22,6 @@ class AboutTest extends TestCase
 		$response = $action();
 
 		self::assertEquals(200, $response->getStatusCode());
-		self::assertContains("I am a simple site", $response->getBody()->getContents());
+		self::assertContains("Why do we use it?", $response->getBody()->getContents());
 	}
 }

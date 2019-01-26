@@ -13,6 +13,12 @@ $this->extend("layout/default");
 		<?= $this->renderBlock("main"); ?>
 	</div>
 	<div class="col-md-4">
+		<?php $this->ensureBlock("sidebar"); ?>
+		<div class="panel panel-default">
+			<div class="panel-heading">Links</div>
+			<div class="panel-body">Site navigation</div>
+		</div>
+		<?php $this->endBlock(); ?>
 		<?= $this->renderBlock("sidebar"); ?>
 	</div>
 </div>

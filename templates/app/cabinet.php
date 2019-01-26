@@ -23,7 +23,7 @@ Psr framework - cabinet
 <?php $this->endBlock(); ?>
 
 <?php $this->beginBlock("main"); ?>
-<h3 class="cover-heading">Cabinet of <?=htmlspecialchars($username)?></h3>
+<h3 class="cover-heading">Cabinet of <?=$this->encode($username);?></h3>
 <?php $this->endBlock(); ?>
 
 <?php $this->beginBlock("sidebar"); ?>

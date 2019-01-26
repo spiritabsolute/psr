@@ -17,6 +17,11 @@ class PhpRenderer implements TemplateRenderer
 		$this->blockNames = new \SplStack();
 	}
 
+	public function extend($view): void
+	{
+		$this->extend = $view;
+	}
+
 	public function render($view, $params = []): string
 	{
 		$templateFile = $this->path ."/".$view.".php";
@@ -34,14 +39,23 @@ class PhpRenderer implements TemplateRenderer
 		return $this->render($this->extend);
 	}
 
-	public function renderBlock($name): string
+	public function block($name, $content)
 	{
-		return $this->blocks[$name] ?? "";
+		if ($this->hasBlock($name))
+		{
+			return;
+		}
+		$this->blocks[$name] = $content;
 	}
 
-	public function extend($view): void
+	public function ensureBlock($name): bool
 	{
-		$this->extend = $view;
+		if (!$this->hasBlock($name))
+		{
+			return false;
+		}
+		$this->beginBlock($name);
+		return true;
 	}
 
 	public function beginBlock($name): void
@@ -52,7 +66,32 @@ class PhpRenderer implements TemplateRenderer
 
 	public function endBlock(): void
 	{
+		$content = ob_get_clean();
 		$name = $this->blockNames->pop();
-		$this->blocks[$name] = ob_get_clean();
+		if ($this->hasBlock($name))
+		{
+			return;
+		}
+		$this->blocks[$name] = $content;
+	}
+
+	public function hasBlock($name): bool
+	{
+		return array_key_exists($name, $this->blocks);
+	}
+
+	public function renderBlock($name): string
+	{
+		$block = $this->blocks[$name] ?? null;
+		if ($block instanceof \Closure)
+		{
+			return $block();
+		}
+		return $block ?? "";
+	}
+
+	public function encode($string)
+	{
+		return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE);
 	}
 }

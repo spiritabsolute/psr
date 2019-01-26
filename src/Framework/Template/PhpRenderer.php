@@ -1,6 +1,8 @@
 <?php
 namespace Framework\Template;
 
+use Framework\Http\Router\Router;
+
 class PhpRenderer implements TemplateRenderer
 {
 	private $path;
@@ -10,11 +12,16 @@ class PhpRenderer implements TemplateRenderer
 	 * @var \SplStack
 	 */
 	private $blockNames;
+	/**
+	 * @var Router
+	 */
+	private $router;
 
-	public function __construct($path)
+	public function __construct($path, Router $router)
 	{
 		$this->path = $path;
 		$this->blockNames = new \SplStack();
+		$this->router = $router;
 	}
 
 	public function extend($view): void
@@ -93,5 +100,10 @@ class PhpRenderer implements TemplateRenderer
 	public function encode($string)
 	{
 		return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE);
+	}
+
+	public function generatePath($name, array $params = []): string
+	{
+		return $this->router->generate($name, $params);
 	}
 }

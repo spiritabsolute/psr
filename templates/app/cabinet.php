@@ -15,9 +15,9 @@ Psr framework - cabinet
 <div class="inner">
 	<h3 class="masthead-brand">Psr framework</h3>
 	<nav class="nav nav-masthead">
-		<a class="nav-link" href="/">Home</a>
-		<a class="nav-link" href="/about">About</a>
-		<a class="nav-link active" href="/cabinet">Cabinet</a>
+		<a class="nav-link" href="<?=$this->generatePath("home")?>">Home</a>
+		<a class="nav-link" href="<?=$this->generatePath("about")?>">About</a>
+		<a class="nav-link active" href="<?=$this->generatePath("cabinet")?>">Cabinet</a>
 	</nav>
 </div>
 <?php $this->endBlock(); ?>

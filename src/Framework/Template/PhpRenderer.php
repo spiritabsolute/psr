@@ -57,7 +57,7 @@ class PhpRenderer implements TemplateRenderer
 
 	public function ensureBlock($name): bool
 	{
-		if (!$this->hasBlock($name))
+		if ($this->hasBlock($name))
 		{
 			return false;
 		}

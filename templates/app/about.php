@@ -3,7 +3,7 @@
  * @var \Framework\Template\PhpRenderer $this
  */
 
-$this->extend("layout/default");
+$this->extend("layout/columns");
 ?>
 
 <?php $this->beginBlock("title"); ?>
@@ -19,13 +19,14 @@ $this->extend("layout/default");
 	<h3 class="masthead-brand">Psr framework</h3>
 	<nav class="nav nav-masthead">
 		<a class="nav-link" href="<?=$this->generatePath("home")?>">Home</a>
+		<a class="nav-link" href="<?=$this->generatePath("blog")?>">Blog</a>
 		<a class="nav-link active" href="<?=$this->generatePath("about")?>">About</a>
 		<a class="nav-link" href="<?=$this->generatePath("cabinet")?>">Cabinet</a>
 	</nav>
 </div>
 <?php $this->endBlock(); ?>
 
-<?php $this->beginBlock("content"); ?>
+<?php $this->beginBlock("main"); ?>
 <h3>Why do we use it?</h3>
 <p>
 	It is a long established fact that a reader will be distracted by the readable content of a page when

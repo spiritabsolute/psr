@@ -19,7 +19,7 @@ return [
 				return new Application(
 					$container->get(Resolver::class),
 					$container->get(Router::class),
-					new Middleware\PageNotFound()
+					$container->get(Middleware\PageNotFound::class)
 				);
 			},
 			Router::class => function () {
@@ -29,7 +29,10 @@ return [
 				return new Resolver($container);
 			},
 			Middleware\ErrorHandler::class => function (ContainerInterface $container) {
-				return new Middleware\ErrorHandler($container->get("config")["debug"]);
+				return new Middleware\ErrorHandler(
+					$container->get("config")["debug"],
+					$container->get(TemplateRenderer::class)
+				);
 			},
 			TemplateRenderer::class => function (ContainerInterface $container) {
 				return new PhpRenderer("../templates", $container->get(Router::class));

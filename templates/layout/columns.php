@@ -8,19 +8,21 @@ $this->extend("layout/default");
 ?>
 
 <?php $this->beginBlock("content"); ?>
-<div class="row">
-	<div class="col-md-8">
-		<?= $this->renderBlock("main"); ?>
-	</div>
-	<div class="col-md-4">
-		<?php if ($this->ensureBlock("sidebar")): ?>
-		<div class="panel panel-default">
-			<div class="panel-heading">Links</div>
-			<div class="panel-body">Site navigation</div>
-		</div>
-		<?php $this->endBlock(); endif; ?>
-		
-		<?= $this->renderBlock("sidebar"); ?>
+
+<?= $this->renderBlock("main"); ?>
+
+<?php if ($this->ensureBlock("sidebar")): ?>
+<div class="side">
+	<div>
+		<h3>Navigation</h3>
+		<ul>
+			<li>Link 1</li>
+			<li>Link 2</li>
+			<li>Link 3</li>
+		</ul>
 	</div>
 </div>
+<?php $this->endBlock(); endif; ?>
+<?= $this->renderBlock("sidebar"); ?>
+
 <?php $this->endBlock(); ?>

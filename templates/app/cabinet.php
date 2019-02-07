@@ -12,25 +12,34 @@ Psr framework - cabinet
 <?php $this->endBlock(); ?>
 
 <?php $this->beginBlock("navbar"); ?>
-<div class="inner">
-	<h3 class="masthead-brand">Psr framework</h3>
-	<nav class="nav nav-masthead">
-		<a class="nav-link" href="<?=$this->generatePath("home")?>">Home</a>
-		<a class="nav-link" href="<?=$this->generatePath("blog")?>">Blog</a>
-		<a class="nav-link" href="<?=$this->generatePath("about")?>">About</a>
-		<a class="nav-link active" href="<?=$this->generatePath("cabinet")?>">Cabinet</a>
-	</nav>
-</div>
+<a href="<?=$this->generatePath("home")?>">Home</a>
+<a href="<?=$this->generatePath("blog")?>">Blog</a>
+<a href="<?=$this->generatePath("about")?>">About</a>
+<a class="active" href="<?=$this->generatePath("cabinet")?>">Cabinet</a>
+<?php $this->endBlock(); ?>
+
+<?php $this->beginBlock("breadcrumb"); ?>
+<ul>
+	<li><a href="<?=$this->generatePath("home")?>">Home</a></li>
+	<li>Cabinet</li>
+</ul>
 <?php $this->endBlock(); ?>
 
 <?php $this->beginBlock("main"); ?>
-<h3 class="cover-heading">Cabinet of <?=$this->encode($username);?></h3>
+<div class="content">
+	<h3>Cabinet of <?=$this->encode($username);?></h3>
+</div>
 <?php $this->endBlock(); ?>
 
 <?php $this->beginBlock("sidebar"); ?>
-<div class="panel panel-default">
-	<div class="panel-heading">Links</div>
-	<div class="panel-body">Cabinet</div>
-	<div class="panel-body">Settings</div>
+<div class="side">
+	<div>
+		<h3>Cabinet</h3>
+		<ul>
+			<li>Profile</li>
+			<li>Settings</li>
+			<li>Log out</li>
+		</ul>
+	</div>
 </div>
 <?php $this->endBlock(); ?>

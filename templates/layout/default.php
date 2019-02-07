@@ -8,38 +8,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<?= $this->renderBlock("meta"); ?>
 	<title><?= $this->renderBlock("title"); ?></title>
-	<!-- Bootstrap core CSS -->
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-	<!-- Custom styles for this template -->
-	<link href="/css/cover.css" rel="stylesheet">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?= $this->renderBlock("meta"); ?>
+	<link href="/css/default.css" rel="stylesheet">
 </head>
 <body>
-<div class="site-wrapper">
-	<div class="site-wrapper-inner">
-		<div class="cover-container">
-			<div class="masthead clearfix">
-				<?= $this->renderBlock("navbar"); ?>
-			</div>
-			<div class="inner cover">
-				<?= $this->renderBlock("content"); ?>
-			</div>
-			<div class="mastfoot">
-				<div class="inner">
-					<p>&copy; 2018</p>
-				</div>
-			</div>
-		</div>
+<header>
+	<div class="brand">
+		<h3>Psr</h3>
 	</div>
-</div>
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+	<nav class="nav-links">
+		<?= $this->renderBlock("navbar"); ?>
+	</nav>
+</header>
+<section>
+	<nav class="breadcrumb">
+		<?= $this->renderBlock("breadcrumb"); ?>
+	</nav>
+</section>
+<main>
+	<?= $this->renderBlock("content"); ?>
+</main>
+<footer>
+	<p class="copyright">&copy; 2018</p>
+</footer>
 </body>
 </html>

@@ -4,7 +4,8 @@ use Framework\Http\Application;
 use Framework\Http\Pipeline\Resolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
-use Framework\Template\PhpRenderer;
+use Framework\Template\Php\PhpRenderer;
+use Framework\Template\Php\Extension\Route as PhpRendererRoute;
 use Framework\Template\TemplateRenderer;
 use Psr\Container\ContainerInterface;
 use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
@@ -35,7 +36,9 @@ return [
 				);
 			},
 			TemplateRenderer::class => function (ContainerInterface $container) {
-				return new PhpRenderer("../templates", $container->get(Router::class));
+				$renderer = new PhpRenderer("../templates");
+				$renderer->addExtension($container->get(PhpRendererRoute::class));
+				return $renderer;
 			},
 		]
 	],

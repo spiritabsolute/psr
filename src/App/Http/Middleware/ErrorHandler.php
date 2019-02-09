@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 use Framework\Template\TemplateRenderer;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\JsonResponse;
 
 class ErrorHandler
 {

@@ -18,3 +18,4 @@ services:
       - ./templates:/app/templates
       - ./tests:/app/tests
       - ./phpunit.xml.dist:/app/phpunit.xml.dist
+      - ./cache:/cache

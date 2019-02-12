@@ -20,7 +20,10 @@ interface Router
 	 * @throws RouteNotFoundException
 	 * @return string
 	 */
-	public function generate($name, array $params = []): string;
+	public function generate($name, array $params): string;
 
-	public function addRoute($name, $path, $handler, array $methods, array $options): void;
+	/**
+	 * @param RouteData $data
+	 */
+	public function addRoute(RouteData $data): void;
 }

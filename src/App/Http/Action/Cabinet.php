@@ -3,10 +3,12 @@ namespace App\Http\Action;
 
 use App\Http\Middleware\BasicAuth;
 use Framework\Template\TemplateRenderer;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class Cabinet
+class Cabinet implements RequestHandlerInterface
 {
 	private $templateRenderer;
 
@@ -15,7 +17,16 @@ class Cabinet
 		$this->templateRenderer = $templateRenderer;
 	}
 
-	public function __invoke(ServerRequestInterface $request)
+	/**
+	 * Handles a request and produces a response.
+	 *
+	 * May call other collaborating code to generate the response.
+	 *
+	 * @param ServerRequestInterface $request
+	 *
+	 * @return ResponseInterface
+	 */
+	public function handle(ServerRequestInterface $request): ResponseInterface
 	{
 		$username = $request->getAttribute(BasicAuth::ATTRIBUTE);
 		return new HtmlResponse($this->templateRenderer->render("app/cabinet", [

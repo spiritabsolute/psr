@@ -6,6 +6,7 @@ use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
 use Framework\Template\TemplateRenderer;
 use Psr\Container\ContainerInterface;
+use Zend\Diactoros\Response;
 use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
 return [
@@ -26,7 +27,7 @@ return [
 				return new AuraRouterAdapter(new Aura\Router\RouterContainer());
 			},
 			Resolver::class => function (ContainerInterface $container) {
-				return new Resolver($container);
+				return new Resolver($container, $container->get(Response::class));
 			},
 			Middleware\ErrorHandler::class => function (ContainerInterface $container) {
 				return new Middleware\ErrorHandler(

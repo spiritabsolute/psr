@@ -26,7 +26,7 @@ class BasicAuth
 			{
 				if ($username == $name && $password == $pass)
 				{
-					return $next($request->withAttribute(self::ATTRIBUTE, $username));
+					return $next($request->withAttribute(self::ATTRIBUTE, $username), $response);
 				}
 			}
 		}

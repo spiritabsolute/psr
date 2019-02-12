@@ -1,77 +1,72 @@
 <?php
+
 namespace Framework\Http\Pipeline;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Stratigility\Middleware\CallableMiddlewareDecorator;
+use Zend\Stratigility\Middleware\DoublePassMiddlewareDecorator;
+use Zend\Stratigility\Middleware\RequestHandlerMiddleware;
+use Zend\Stratigility\MiddlewarePipe;
 
-/**
- * Class Resolver. Converts any types of elements into functions with which a pipeline can work.
- * @package Framework\Http\Pipeline
- */
 class Resolver
 {
-	/**
-	 * @var ContainerInterface
-	 */
 	private $container;
+	private $responsePrototype;
 
-	public function __construct(ContainerInterface $container)
+	public function __construct(ContainerInterface $container, ResponseInterface $responsePrototype)
 	{
-
 		$this->container = $container;
+		$this->responsePrototype = $responsePrototype;
 	}
 
-	public function resolve($handler): callable
+	public function resolve($handler): MiddlewareInterface
 	{
-		if (is_array($handler))
+		if (\is_array($handler))
 		{
 			return $this->createPipe($handler);
 		}
 
-		if (is_string($handler) && $this->container->has($handler))
+		if (\is_string($handler) && $this->container->has($handler))
 		{
-			return function(ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler)
-			{
+			return new CallableMiddlewareDecorator(function (ServerRequestInterface $request, RequestHandlerInterface $next) use ($handler) {
 				$middleware = $this->resolve($this->container->get($handler));
-				return $middleware($request, $response, $next);
-			};
+				return $middleware->process($request, $next);
+			});
 		}
 
 		if ($handler instanceof MiddlewareInterface)
 		{
-			return function(ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler)
-			{
-				return $handler->process($request, new HandlerWrapper($next));
-			};
+			return $handler;
 		}
 
-		if (\is_object($handler))
+		if ($handler instanceof RequestHandlerInterface)
 		{
+			return new RequestHandlerMiddleware($handler);
+		}
+
+		if (\is_object($handler)) {
 			$reflection = new \ReflectionObject($handler);
-			if ($reflection->hasMethod('__invoke'))
-			{
+			if ($reflection->hasMethod('__invoke')) {
 				$method = $reflection->getMethod('__invoke');
 				$parameters = $method->getParameters();
 				if (\count($parameters) === 2 && $parameters[1]->isCallable())
 				{
-					return function(ServerRequestInterface $request,
-						ResponseInterface $response, callable $next) use ($handler)
-					{
-						return $handler($request, $next);
-					};
+					return new SinglePassMiddlewareDecorator($handler);
 				}
-				return $handler;
+				return new DoublePassMiddlewareDecorator($handler, $this->responsePrototype);
 			}
 		}
 
 		throw new UnknownTypeException($handler);
 	}
 
-	private function createPipe(array $handlers): Pipeline
+	private function createPipe(array $handlers): MiddlewarePipe
 	{
-		$pipeline = new Pipeline();
+		$pipeline = new MiddlewarePipe();
 		foreach ($handlers as $handler)
 		{
 			$pipeline->pipe($this->resolve($handler));

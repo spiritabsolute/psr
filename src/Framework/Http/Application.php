@@ -2,67 +2,84 @@
 namespace Framework\Http;
 
 use Framework\Http\Pipeline\Resolver;
-use Framework\Http\Pipeline\Pipeline;
+use Framework\Http\Router\RouteData;
 use Framework\Http\Router\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Stratigility\Middleware\PathMiddlewareDecorator;
+use Zend\Stratigility\MiddlewarePipe;
 
-class Application extends Pipeline
+class Application implements MiddlewareInterface, RequestHandlerInterface
 {
 	private $resolver;
 	private $router;
 	private $default;
+	private $pipeline;
 
-	public function __construct(Resolver $resolver, Router $router, callable $default)
+	public function __construct(Resolver $resolver, Router $router, RequestHandlerInterface $default)
 	{
-		parent::__construct();
 		$this->resolver = $resolver;
 		$this->router = $router;
+		$this->pipeline = new MiddlewarePipe();
 		$this->default = $default;
 	}
 
-	public function pipe($middleware): void
+	public function pipe($path, $middleware = null): void
 	{
-		parent::pipe($this->resolver->resolve($middleware));
+		if ($middleware === null)
+		{
+			$this->pipeline->pipe($this->resolver->resolve($path));
+		}
+		else
+		{
+			$this->pipeline->pipe(new PathMiddlewareDecorator($path, $this->resolver->resolve($middleware)));
+		}
 	}
 
-	public function run(ServerRequestInterface $request, ResponseInterface $response)
+	private function route($name, $path, $handler, array $methods, array $options = []): void
 	{
-		return $this($request, $response, $this->default);
+		$this->router->addRoute(new RouteData($name, $path, $handler, $methods, $options));
 	}
 
-	public function addRoute($name, $path, $handler, array $methods, array $options= []): void
+	public function any($name, $path, $handler, array $options = []): void
 	{
-		$this->router->addRoute($name, $path, $handler, $methods, $options);
+		$this->route($name, $path, $handler, $options);
 	}
 
-	public function addAnyRoute($name, $path, $handler, array $options= []): void
+	public function get($name, $path, $handler, array $options = []): void
 	{
-		$this->addRoute($name, $path, $handler, [], $options);
+		$this->route($name, $path, $handler, ['GET'], $options);
 	}
 
-	public function addGetRoute($name, $path, $handler, array $options= []): void
+	public function post($name, $path, $handler, array $options = []): void
 	{
-		$this->addRoute($name, $path, $handler, ["GET"], $options);
+		$this->route($name, $path, $handler, ['POST'], $options);
 	}
 
-	public function addPostRoute($name, $path, $handler, array $options= []): void
+	public function put($name, $path, $handler, array $options = []): void
 	{
-		$this->addRoute($name, $path, $handler, ["POST"], $options);
+		$this->route($name, $path, $handler, ['PUT'], $options);
 	}
 
-	public function addPutRoute($name, $path, $handler, array $options = []): void
+	public function patch($name, $path, $handler, array $options = []): void
 	{
-		$this->addRoute($name, $path, $handler, ["PUT"], $options);
+		$this->route($name, $path, $handler, ['PATCH'], $options);
 	}
 
-	public function addPatchRoute($name, $path, $handler, array $options = []): void
+	public function delete($name, $path, $handler, array $options = []): void
 	{
-		$this->addRoute($name, $path, $handler, ["PATCH"], $options);
+		$this->route($name, $path, $handler, ['DELETE'], $options);
 	}
 
-	public function addDeleteRoute($name, $path, $handler, array $options = []): void
+	public function handle(ServerRequestInterface $request): ResponseInterface
 	{
-		$this->addRoute($name, $path, $handler, ["DELETE"], $options);
+		return $this->pipeline->process($request, $this->default);
+	}
+
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+	{
+		return $this->pipeline->process($request, $handler);
 	}
 }

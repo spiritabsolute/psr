@@ -4,7 +4,7 @@
 		"process-timeout": 0
 	},
 	"require": {
-		"php": ">=7.1.0",
+		"php": ">=7.2.0",
 		"aura/router": "^3.1",
 		"psr/container": "^1.0",
 		"psr/http-message": "^1.0",
@@ -13,7 +13,8 @@
 		"twig/twig": "^2.6",
 		"zendframework/zend-config-aggregator": "^1.1",
 		"zendframework/zend-diactoros": "^1.7",
-		"zendframework/zend-servicemanager": "^3.3"
+		"zendframework/zend-servicemanager": "^3.3",
+		"zendframework/zend-stratigility": "^3.0"
 	},
 	"autoload": {
 		"psr-4": {

@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Middleware\ErrorHandler;
+namespace Framework\Http\Middleware\ErrorHandler;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

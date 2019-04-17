@@ -24,6 +24,7 @@
 		}
 	},
 	"require-dev": {
+		"filp/whoops": "^2.3",
 		"phpunit/phpunit": "^6.5"
 	},
 	"scripts": {

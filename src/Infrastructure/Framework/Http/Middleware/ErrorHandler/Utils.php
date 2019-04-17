@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Middleware\ErrorHandler;
+namespace Infrastructure\Framework\Http\Middleware\ErrorHandler;
 
 class Utils
 {

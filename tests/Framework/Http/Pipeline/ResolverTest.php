@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Framework\Http\Pipeline;
 
 use Framework\Http\Pipeline\Resolver;
@@ -19,18 +20,14 @@ class ResolverTest extends TestCase
 	 * @dataProvider getValidHandlers
 	 * @param $handler
 	 */
-	public function testDirect($handler)
+	public function testDirect($handler): void
 	{
-		$resolver = new Resolver(new DummyContainer());
+		$resolver = new Resolver(new DummyContainer(), new Response());
 		$middleware = $resolver->resolve($handler);
 
-		/**
-		 * @var ResponseInterface $response
-		 */
-		$response = $middleware(
+		$response = $middleware->process(
 			(new ServerRequest())->withAttribute("attribute", $value = "value"),
-			new Response(),
-			new NotFoundMiddleware()
+			new NotFoundHandler()
 		);
 
 		self::assertEquals([$value], $response->getHeader("X-Header"));
@@ -40,78 +37,81 @@ class ResolverTest extends TestCase
 	 * @dataProvider getValidHandlers
 	 * @param $handler
 	 */
-	public function testNext($handler)
+	public function testNext($handler): void
 	{
-		$resolver = new Resolver(new DummyContainer());
+		$resolver = new Resolver(new DummyContainer(), new Response());
 		$middleware = $resolver->resolve($handler);
 
-		/**
-		 * @var ResponseInterface $response
-		 */
-		$response = $middleware(
+		$response = $middleware->process(
 			(new ServerRequest())->withAttribute("next", true),
-			new Response(),
-			new NotFoundMiddleware()
+			new NotFoundHandler()
 		);
 
 		self::assertEquals(404, $response->getStatusCode());
 	}
 
-	public function testArray()
+	public function getValidHandlers(): array
 	{
-		$resolver = new Resolver(new DummyContainer());
+		return [
+			"SinglePass Callback" => [function (ServerRequestInterface $request, callable $next) {
+				if ($request->getAttribute("next"))
+				{
+					return $next($request);
+				}
+				return (new HtmlResponse(""))
+					->withHeader("X-Header", $request->getAttribute("attribute"));
+			}],
+			"SinglePass Class" => [SinglePassMiddleware::class],
+			"SinglePass Object" => [new SinglePassMiddleware()],
+			"DoublePass Callback" => [function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+				if ($request->getAttribute("next"))
+				{
+					return $next($request, $response);
+				}
+				return $response
+					->withHeader("X-Header", $request->getAttribute("attribute"));
+			}],
+			"DoublePass Class" => [DoublePassMiddleware::class],
+			"DoublePass Object" => [new DoublePassMiddleware()],
+			"PSR Class" => [PsrMiddleware::class],
+			"PSR Object" => [new PsrMiddleware()],
+		];
+	}
+
+	public function testHandler(): void
+	{
+		$resolver = new Resolver(new DummyContainer(), new Response());
+
+		$middleware = $resolver->resolve(PsrHandler::class);
+
+		$response = $middleware->process(
+			(new ServerRequest())->withAttribute("attribute", $value = "value"),
+			new NotFoundHandler()
+		);
+
+		self::assertEquals([$value], $response->getHeader("X-Header"));
+	}
+
+	public function testArray(): void
+	{
+		$resolver = new Resolver(new DummyContainer(), new Response());
+
 		$middleware = $resolver->resolve([
 			new DummyMiddleware(),
-			new CallableMiddleware()
+			new SinglePassMiddleware()
 		]);
 
-		/**
-		 * @var ResponseInterface $response
-		 */
-		$response = $middleware(
+		$response = $middleware->process(
 			(new ServerRequest())->withAttribute("attribute", $value = "value"),
-			new Response(),
-			new NotFoundMiddleware()
+			new NotFoundHandler()
 		);
 
 		self::assertEquals(["dummy"], $response->getHeader("X-Dummy"));
 		self::assertEquals([$value], $response->getHeader("X-Header"));
 	}
-
-	public function getValidHandlers()
-	{
-		return [
-			"CallableCallback" => [
-				function (ServerRequestInterface $request, callable $next)
-				{
-					if ($request->getAttribute("next"))
-					{
-						return $next($request);
-					}
-					return (new HtmlResponse(""))->withHeader("X-Header", $request->getAttribute("attribute"));
-				}
-			],
-			"CallableClass" => [CallableMiddleware::class],
-			"CallableObject" => [new CallableMiddleware()],
-			"DoublePassCallback" => [
-				function (ServerRequestInterface $request, ResponseInterface $response, callable $next)
-				{
-					if ($request->getAttribute("next"))
-					{
-						return $next($request);
-					}
-					return $response->withHeader("X-Header", $request->getAttribute("attribute"));
-				}
-			],
-			"DoublePassClass" => [DoublePassMiddleware::class],
-			"DoublePassObject" => [new DoublePassMiddleware()],
-			"InteropClass" => [InteropMiddleware::class],
-			"InteropObject" => [new InteropMiddleware()]
-		];
-	}
 }
 
-class CallableMiddleware
+class SinglePassMiddleware
 {
 	public function __invoke(ServerRequestInterface $request, callable $next): ResponseInterface
 	{
@@ -119,8 +119,8 @@ class CallableMiddleware
 		{
 			return $next($request);
 		}
-
-		return (new HtmlResponse(""))->withHeader("X-Header", $request->getAttribute("attribute"));
+		return (new HtmlResponse(""))
+			->withHeader("X-Header", $request->getAttribute("attribute"));
 	}
 }
 
@@ -130,14 +130,14 @@ class DoublePassMiddleware
 	{
 		if ($request->getAttribute("next"))
 		{
-			return $next($request);
+			return $next($request, $response);
 		}
-
-		return $response->withHeader("X-Header", $request->getAttribute("attribute"));
+		return $response
+			->withHeader("X-Header", $request->getAttribute("attribute"));
 	}
 }
 
-class InteropMiddleware implements MiddlewareInterface
+class PsrMiddleware implements MiddlewareInterface
 {
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
@@ -145,14 +145,23 @@ class InteropMiddleware implements MiddlewareInterface
 		{
 			return $handler->handle($request);
 		}
-
-		return (new HtmlResponse(""))->withHeader("X-Header", $request->getAttribute("attribute"));
+		return (new HtmlResponse(""))
+			->withHeader("X-Header", $request->getAttribute("attribute"));
 	}
 }
 
-class NotFoundMiddleware
+class PsrHandler implements RequestHandlerInterface
 {
-	public function __invoke(ServerRequestInterface $request)
+	public function handle(ServerRequestInterface $request): ResponseInterface
+	{
+		return (new HtmlResponse(""))
+			->withHeader("X-Header", $request->getAttribute("attribute"));
+	}
+}
+
+class NotFoundHandler implements RequestHandlerInterface
+{
+	public function handle(ServerRequestInterface $request): ResponseInterface
 	{
 		return new EmptyResponse(404);
 	}
@@ -162,6 +171,7 @@ class DummyMiddleware
 {
 	public function __invoke(ServerRequestInterface $request, callable $next): ResponseInterface
 	{
-		return $next($request)->withHeader("X-Dummy", "dummy");
+		return $next($request)
+			->withHeader("X-Dummy", "dummy");
 	}
 }

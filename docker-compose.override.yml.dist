@@ -19,3 +19,4 @@ services:
       - ./tests:/app/tests
       - ./phpunit.xml.dist:/app/phpunit.xml.dist
       - ./cache:/cache
+      - ./logs:/logs

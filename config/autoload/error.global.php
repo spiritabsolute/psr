@@ -4,13 +4,18 @@ use Framework\Http\Middleware\ErrorHandler\WhoopsErrorResponseGenerator;
 use Framework\Http\Middleware\ErrorHandler\ErrorHandler;
 use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
 use Framework\Template\TemplateRenderer;
+use Monolog\Logger;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 return [
 	"dependencies" => [
 		"factories" => [
 			ErrorHandler::class => function (ContainerInterface $container) {
-				return new ErrorHandler($container->get(ErrorResponseGenerator::class));
+				return new ErrorHandler(
+					$container->get(ErrorResponseGenerator::class),
+					$container->get(LoggerInterface::class)
+				);
 			},
 			ErrorResponseGenerator::class => function (ContainerInterface $container) {
 				if ($container->get("config")["debug"])
@@ -33,6 +38,14 @@ return [
 				$whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
 				$whoops->register();
 				return $whoops;
+			},
+			LoggerInterface::class => function (ContainerInterface $container) {
+				$logger = new Logger("App");
+				$logger->pushHandler(new Monolog\Handler\StreamHandler(
+					"../logs/application.log",
+					($container->get("config")["debug"] ? Logger::DEBUG : Logger::WARNING)
+				));
+				return $logger;
 			},
 		]
 	]

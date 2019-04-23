@@ -1,5 +1,4 @@
 .git
 .idea
-/log
 /vendor
 /phpunit.xml

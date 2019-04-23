@@ -3,7 +3,6 @@ namespace Infrastructure\Framework\Http\Middleware\ErrorHandler;
 
 use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
 use Framework\Template\TemplateRenderer;
-use Infrastructure\Framework\Http\Middleware\ErrorHandler\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,7 +21,7 @@ class BaseErrorResponseGenerator implements ErrorResponseGenerator
 
 	public function generate(ServerRequestInterface $request, \Throwable $exception): ResponseInterface
 	{
-		$code = Utils::getStatusCode($exception);
+		$code = $this->getStatusCode($exception);
 
 		$response = $this->response->withStatus($code);
 		$response->getBody()->write($this->templateRenderer->render($this->getView($code), [
@@ -36,5 +35,15 @@ class BaseErrorResponseGenerator implements ErrorResponseGenerator
 	private function getView($code): string
 	{
 		return (array_key_exists($code, $this->views) ? $this->views[$code] : $this->views["error"]);
+	}
+
+	private function getStatusCode(\Throwable $exception): int
+	{
+		$code = $exception->getCode();
+		if ($code >= 400 && $code < 600)
+		{
+			return $code;
+		}
+		return 500;
 	}
 }

@@ -1,7 +1,6 @@
 <?php
 namespace Framework\Http\Middleware\ErrorHandler;
 
-use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
 use Infrastructure\Framework\Http\Middleware\ErrorHandler\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,7 +28,7 @@ class WhoopsErrorResponseGenerator implements ErrorResponseGenerator
 			}
 		}
 
-		$response = $this->response->withStatus(Utils::getStatusCode($exception));
+		$response = $this->response->withStatus($this->getStatusCode($exception));
 		$response->getBody()->write($this->whoops->handleException($exception));
 
 		return $response;
@@ -47,5 +46,15 @@ class WhoopsErrorResponseGenerator implements ErrorResponseGenerator
 			"Query String Arguments" => $request->getQueryParams(),
 			"Body Params" => $request->getParsedBody(),
 		]);
+	}
+
+	private function getStatusCode(\Throwable $exception): int
+	{
+		$code = $exception->getCode();
+		if ($code >= 400 && $code < 600)
+		{
+			return $code;
+		}
+		return 500;
 	}
 }
